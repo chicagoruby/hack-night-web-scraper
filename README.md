@@ -16,28 +16,31 @@ document = open('https://www.reddit.com/r/aww/search?q=cats&restrict_sr=on&sort=
 content = document.read
 ```
 
+### Note
+> Sometimes websites have limits on the number of connections that can be made via scraping. You may see an error `OpenURI::HTTPError: 429 Too Many Requests`. If that happens, just pick another website to scrape, such as a Craigslist search for "toys" (https://chicago.craigslist.org/search/sss?query=toys&sort=rel). 
+
+> If you search a different website, you will likely have to use different CSS selectors. Search the HTML tree using Chrome Developer Tools and find your way down the page.
+
 Back in irb, parse the content into a Nokogiri object that can be parsed as ruby code.
 ```ruby
 parsed_content = Nokogiri::HTML(content) 
 ```
 
-We can use CSS selectors to dig deeper into the HTML tree. Nokogiri finds the CSS class within the HTML structure, and it will return the HTML subset if it finds the CSS selector.
+We can use CSS selectors to dig deeper into the HTML tree. Nokogiri finds the CSS class within the HTML structure, and it will return the HTML subset if it finds the CSS selector. _(The page you use may have different classes, so the following example may need to be tailored to the HTML of the page you selected.)_
 ```ruby
-parsed_content.css('.content')
+parsed_content.css('.search-result-listing')
 ```
 
 You can nest the query to go even deeper.
 ```ruby
-parsed_content.css('.content').css('.search-result-listing')
-
-parsed_content.css('.content').css('.search-result-listing').css('.search-result-group').css('.contents').css('.search-result').css('.search-result-header').first
+parsed_content.css('.search-result-listing').css('.search-result-group').css('.contents').css('.search-result').css('.search-result-header').first
 
 parsed_content.css('.search-result-header').first
 ```
 
 We can find out a bit more about this object
 ```ruby
-post_title = _
+post_title = _       # The underscore saves the result of the previous command as the variable you are assigning.
 
 post_title.class
 
